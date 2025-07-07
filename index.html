@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> هُدى</title>
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <!-- jQuery Fallback -->
+  <script>
+    if (typeof $ === 'undefined') {
+      console.log('Loading jQuery fallback...');
+      document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"><\/script>');
+    }
+  </script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div id="app" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6">
+    <div id="fallback-content" class="text-center">
+      <h1 class="text-2xl font-bold text-green-800 mb-4"> فَمَن يُرِدِ اللَّهُ أَن يَهْدِيَهُ يَشْرَحْ صَدْرَهُ لِلْإِسْلَامِ ۖ </h1>
+      <p class="text-gray-600">جاري التحميل...</p>
+    </div>
+  </div>
+
+  <!-- Script Inline -->
+  <script>
+    console.log('Script loading...');
+    
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      
+      // Check if jQuery is loaded
+      if (typeof $ === 'undefined') {
+        console.error('jQuery not loaded');
+        document.getElementById('app').innerHTML = `
+          <div class="text-center p-8">
+            <h1 class="text-2xl font-bold text-red-600 mb-4">خطأ في تحميل المكتبات</h1>
+            <p class="text-gray-600">jQuery لم يتم تحميله بشكل صحيح</p>
+            <button onclick="location.reload()" class="bg-green-600 text-white px-4 py-2 rounded mt-4">إعادة التحميل</button>
+          </div>
+        `;
+        return;
+      }
+      
+      console.log('jQuery loaded successfully');
+      
+      // Initialize app
+      initializeApp();
+    });
+    
+    function initializeApp() {
+      console.log('Initializing app...');
+      
+      try {
+        // Hide fallback content
+        $('#fallback-content').hide();
+        console.log('Fallback content hidden');
+        
+        // Simple test first
+        $('#app').html('<div class="text-center p-4 text-green-600">جاري تحميل التطبيق...</div>');
+        
+        // Create main page
+        const startPage = `
+          <div id="start-page" class="flex flex-col items-center justify-center space-y-8 animate-fadeIn">
+            <div class="text-center">
+              <h1 class="text-3xl md:text-3xl font-bold text-green-800 mb-2"> فَمَن يُرِدِ اللَّهُ أَن يَهْدِيَهُ يَشْرَحْ صَدْرَهُ لِلْإِسْلَامِ ۖ </h1>
+              <p class="text-gray-600 text-lg">موسوعة شاملة للقرآن الكريم والأحاديث النبوية</p>
+            </div>
+            <div class="flex flex-col w-full space-y-4">
+              <button id="quran-mode" class="mode-btn py-4 px-8 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white text-xl font-semibold shadow-lg hover:from-green-700 hover:to-green-800 transition transform hover:scale-105">
+                <div class="flex items-center justify-center">
+                  <div class="text-right">
+                    <div>البحث في القرآن الكريم</div>
+                    <div class="text-sm opacity-90">الآيات والتفسير والترجمة</div>
+                  </div>
+                </div>
+              </button>
+              <button id="hadith-mode" class="mode-btn py-4 px-8 rounded-xl bg-gradient-to-r from-yellow-600 to-yellow-700 text-white text-xl font-semibold shadow-lg hover:from-yellow-700 hover:to-yellow-800 transition transform hover:scale-105">
+                <div class="flex items-center justify-center">
+                  <div class="text-right">
+                    <div>البحث في الأحاديث النبوية</div>
+                    <div class="text-sm opacity-90">الأحاديث الصحيحة والشرح</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+            
+            <!-- Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 text-center">
+              <div class="bg-green-50 p-4 rounded-lg">
+                <div class="font-semibold text-green-800">بحث سريع</div>
+                <div class="text-sm text-gray-600">ابحث في القرآن والأحاديث بسهولة</div>
+              </div>
+              <div class="bg-blue-50 p-4 rounded-lg">
+
+                <div class="font-semibold text-blue-800">تفسير شامل</div>
+                <div class="text-sm text-gray-600">تفسير ابن كثير وابن عثيمين والقرطبي</div>
+              </div>
+              <div class="bg-purple-50 p-4 rounded-lg">
+                <div class="font-semibold text-purple-800">تلاوة صوتية</div>
+                <div class="text-sm text-gray-600">استمع للتلاوة بصوت مشاري العفاسي</div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        $('#app').html(startPage);
+        console.log('Start page rendered successfully');
+
+        // Add click events
+        $(document).on('click', '.mode-btn', function () {
+          console.log('Mode button clicked:', $(this).attr('id'));
+          const mode = $(this).attr('id') === 'quran-mode' ? 'quran' : 'hadith';
+          renderSearchPage(mode);
+        });
+
+        console.log('App initialized successfully');
+        
+      } catch (error) {
+        console.error('Error initializing app:', error);
+        $('#app').html(`
+          <div class="text-center p-8">
+            <h1 class="text-2xl font-bold text-red-600 mb-4">خطأ في تحميل التطبيق</h1>
+            <p class="text-gray-600">حدث خطأ أثناء تحميل التطبيق: ${error.message}</p>
+            <button onclick="location.reload()" class="bg-green-600 text-white px-4 py-2 rounded mt-4">إعادة التحميل</button>
+          </div>
+        `);
+      }
+    }
+
+    function renderSearchPage(mode) {
+      console.log('Rendering search page for mode:', mode);
+      const placeholder = mode === 'quran' ? 'أدخل كلمة أو جزء من آية...' : 'أدخل كلمة أو جزء من حديث...';
+      const searchPage = `
+        <div id="search-page" class="flex flex-col items-center space-y-6 animate-fadeIn">
+          <!-- Header with back button -->
+          <div class="w-full flex items-center justify-between mb-4">
+            <button onclick="location.reload()" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition flex items-center">
+              <span class="mr-2"> ← </span>
+              العودة
+            </button>
+            <h2 class="text-2xl md:text-3xl font-bold text-green-800 text-center">${mode === 'quran' ? 'البحث في القرآن الكريم' : 'البحث في الأحاديث النبوية'}</h2>
+            <div class="w-20"></div> <!-- Spacer for centering -->
+          </div>
+          
+          <!-- Search Box -->
+          <div class="w-full max-w-md">
+            <div class="relative">
+              <input id="search-input" type="text" class="rtl w-full p-4 pr-12 rounded-xl border-2 border-green-200 focus:border-green-500 outline-none text-lg shadow-sm" placeholder="${placeholder}">
+              <button id="search-btn" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition">
+                إبحث
+              </button>
+            </div>
+          </div>
+          
+          <!-- Search Tips -->
+          <div class="text-center text-gray-600 text-sm max-w-md">
+            <p class="mb-2"> نصائح للبحث:</p>
+            <ul class="text-xs space-y-1">
+              ${mode === 'quran' ? 
+                '<li>• اكتب كلمة أو جزء من الآية</li><li>• يمكن البحث باللغة العربية أو الإنجليزية</li><li>• جرب أسماء السور مثل "الفاتحة" أو "البقرة"</li>' :
+                '<li>• اكتب كلمة أو جزء من الحديث</li><li>• يمكن البحث في متن الحديث أو الراوي</li><li>• جرب أسماء الصحابة مثل "أبو هريرة" أو "عائشة"</li>'
+              }
+            </ul>
+          </div>
+          
+          <div id="results-container" class="w-full max-w-4xl mt-8"></div>
+        </div>
+      `;
+      $('#app').html(searchPage);
+      console.log('Search page rendered');
+      setTimeout(() => $('#search-input').focus(), 100);
+      addSearchEvents(mode);
+    }
+
+    function addSearchEvents(mode) {
+      console.log('Adding search events for mode:', mode);
+      $(document).on('click', '#search-btn', function () {
+        console.log('Search button clicked');
+        handleSearch(mode);
+      });
+      $(document).on('keydown', '#search-input', function (e) {
+        if (e.key === 'Enter') {
+          console.log('Enter key pressed');
+          handleSearch(mode);
+        }
+      });
+    }
+
+    async function handleSearch(mode) {
+      const query = $('#search-input').val().trim();
+      console.log('Search query:', query, 'Mode:', mode);
+      if (!query) return;
+
+      $('#results-container').html(`
+        <div class="text-center py-8 text-green-600">
+          <div class="text-xl font-semibold"> جاري البحث...</div>
+        </div>
+      `);
+
+      if (mode === 'quran') {
+        await handleQuranSearch(query);
+      } else {
+        await handleHadithSearch(query);
+      }
+    }
+
+    async function handleQuranSearch(query) {
+      let results = [];
+
+      try {
+        console.log('Trying Quran.com API...');
+        const quranRes = await fetch(`https://api.quran.com/api/v4/search?q=${encodeURIComponent(query)}&size=5&page=1&language=ar`);
+        const quranData = await quranRes.json();
+        results = quranData?.data?.matches || [];
+        console.log('Quran.com results:', results.length);
+      } catch (error) {
+        console.log('Quran.com API failed:', error);
+      }
+
+      if (results.length === 0) {
+        try {
+          console.log('Trying AlQuran Cloud API...');
+          const res = await fetch(`https://api.alquran.cloud/v1/search/${encodeURIComponent(query)}/all/ar`);
+          const data = await res.json();
+          results = data?.data?.matches || [];
+          console.log('AlQuran Cloud results:', results.length);
+        } catch (error) {
+          console.log('AlQuran Cloud API failed:', error);
+        }
+      }
+
+      if (results.length === 0) {
+        console.log('No results found');
+        $('#results-container').html(`
+          <div class="text-center text-red-600 font-bold py-8">
+            <div class="text-3xl mb-4">خطأ</div>
+            <p class="text-lg"> لم يتم العثور على نتائج. من فضلك جرّب نصًا آخر.</p>
+          </div>
+        `);
+        return;
+      }
+
+      console.log('Processing first result:', results[0]);
+      const result = results[0];
+      const surahNum = result.surah?.number || result.surah_id || result.number || 1;
+      const ayahNum = result.numberInSurah || result.verse_number || 1;
+
+      console.log('Fetching detailed data for surah:', surahNum, 'ayah:', ayahNum);
+
+      const [ayah, surah, tafsirIbnKathir, tafsirIbnUthaymeen, tafsirTabari, tafsirQurtubi, tafsirJalalayn, tafsirMaududi, trans, audio] = await Promise.allSettled([
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/quran-uthmani`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.katheer`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.maududi`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.tabari`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.qurtubi`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.jalalayn`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.maududi`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/en.sahih`).then(r => r.json()),
+        fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${ayahNum}/ar.alafasy`).then(r => r.json())
+      ]);
+
+      console.log('API responses received:', {
+        ayah: ayah.status,
+        surah: surah.status,
+        tafsirIbnKathir: tafsirIbnKathir.status,
+        tafsirIbnUthaymeen: tafsirIbnUthaymeen.status,
+        tafsirTabari: tafsirTabari.status,
+        tafsirQurtubi: tafsirQurtubi.status,
+        tafsirJalalayn: tafsirJalalayn.status,
+        tafsirMaududi: tafsirMaududi.status,
+        translation: trans.status,
+        audio: audio.status
+      });
+
+      const ayahText = ayah.value?.data?.text || 'غير متوفر';
+      const surahName = surah.value?.data?.name || 'غير معروف';
+      const engName = surah.value?.data?.englishName || '';
+      const tafsirIbnKathirText = tafsirIbnKathir.value?.data?.text || 'غير متوفر';
+      const tafsirIbnUthaymeenText = tafsirIbnUthaymeen.value?.data?.text || 'غير متوفر';
+      const tafsirTabariText = tafsirTabari.value?.data?.text || 'غير متوفر';
+      const tafsirQurtubiText = tafsirQurtubi.value?.data?.text || 'غير متوفر';
+      const tafsirJalalaynText = tafsirJalalayn.value?.data?.text || 'غير متوفر';
+      const tafsirMaududiText = tafsirMaududi.value?.data?.text || 'غير متوفر';
+      const translation = trans.value?.data?.text || 'غير متوفر';
+      const audioUrl = audio.value?.data?.audio || '';
+
+      // معلومات إضافيه عن السور
+      const revelationType = surah.value?.data?.revelationType === 'Meccan' ? 'مكية' : 'مدنية';
+      const numberOfAyahs = surah.value?.data?.numberOfAyahs || '';
+      const revelationPlace = surah.value?.data?.revelationType === 'Meccan' ? 'مكة المكرمة' : 'المدينة المنورة';
+      
+      console.log('Rendering result HTML');
+      
+      // تفسيرات النتائج 
+      const resultHtml = `
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl shadow-lg border border-green-100 animate-fadeIn">
+          
+          <!-- Ayah Text -->
+          <div class="text-3xl md:text-4xl text-green-900 font-bold text-center mb-6 leading-relaxed">${ayahText}</div>
+          
+          <!-- Surah Info Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div class="bg-green-200 text-green-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">السورة</div>
+              <div class="text-lg">${surahName}</div>
+              <div class="text-sm">${engName}</div>
+            </div>
+            <div class="bg-blue-200 text-blue-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">الآية</div>
+              <div class="text-lg">${ayahNum}</div>
+              <div class="text-sm">من ${numberOfAyahs} آية</div>
+            </div>
+            <div class="bg-yellow-200 text-yellow-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">النوع</div>
+              <div class="text-lg">${revelationType}</div>
+              <div class="text-sm">${revelationPlace}</div>
+            </div>
+            <div class="bg-purple-200 text-purple-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">الترتيب</div>
+              <div class="text-lg">${surahNum}</div>
+              <div class="text-sm">في المصحف</div>
+            </div>
+          </div>
+
+
+          <!-- Tafsir Qurtubi -->
+          <div class="tafsir-card bg-white p-5 rounded-xl shadow-sm mb-4">
+            <h3 class="text-green-800 font-bold text-lg mb-3 flex items-center">
+              <span class="mr-2"></span>
+              تفسير القرطبي
+            </h3>
+            <p class="text-gray-700 leading-relaxed text-justify">${tafsirQurtubiText}</p>
+          </div>
+
+          <!-- Tafsir Jalalayn -->
+          <div class="tafsir-card bg-white p-5 rounded-xl shadow-sm mb-4">
+            <h3 class="text-green-800 font-bold text-lg mb-3 flex items-center">
+              <span class="mr-2"></span>
+              تفسير الجلالين
+            </h3>
+            <p class="text-gray-700 leading-relaxed text-justify">${tafsirJalalaynText}</p>
+          </div>
+
+
+          <!-- English Translation -->
+          <div class="bg-white p-5 rounded-xl shadow-sm mb-4">
+            <h3 class="text-green-800 font-bold text-lg mb-3 flex items-center ltr">
+              <span class="mr-2"></span>
+              English Translation
+            </h3>
+            <p class="text-gray-700 leading-relaxed ltr text-justify">${translation}</p>
+          </div>
+
+          <!-- Additional Information -->
+          <div class="bg-blue-50 p-5 rounded-xl shadow-sm mb-4">
+            <h3 class="text-blue-800 font-bold text-lg mb-3 flex items-center">
+              <span class="mr-2"></span>
+              معلومات إضافية
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-semibold text-blue-700 mb-2">سبب النزول:</h4>
+                <p class="text-gray-700 text-sm">سيتم إضافة سبب النزول قريباً من مصادر موثوقة</p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-blue-700 mb-2">وقت النزول:</h4>
+                <p class="text-gray-700 text-sm">${revelationType === 'مكية' ? 'نزلت في مكة المكرمة قبل الهجرة' : 'نزلت في المدينة المنورة بعد الهجرة'}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audio Player -->
+          ${audioUrl ? `
+            <div class="bg-white p-5 rounded-xl shadow-sm">
+              <h3 class="text-green-800 font-bold text-lg mb-3 flex items-center">
+                <span class="mr-2"></span>
+                التلاوة (مشاري العفاسي)
+              </h3>
+              <audio controls class="w-full" preload="none">
+                <source src="${audioUrl}" type="audio/mpeg">
+                متصفحك لا يدعم تشغيل الصوت.
+              </audio>
+            </div>
+          ` : ''}
+
+          <!-- Navigation -->
+          <div class="flex justify-center mt-6 space-x-4 space-x-reverse">
+            <button onclick="location.reload()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+               بحث جديد
+            </button>
+            <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+               طباعة
+            </button>
+          </div>
+        </div>
+      `;
+
+      $('#results-container').html(resultHtml);
+      console.log('Result HTML rendered successfully');
+    }
+
+    async function handleHadithSearch(query) {
+      // بيانات الأحاديث
+      const hadithDatabase = [
+        {
+          id: 1,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى، فمن كانت هجرته إلى الله ورسوله فهجرته إلى الله ورسوله، ومن كانت هجرته لدنيا يصيبها أو امرأة ينكحها فهجرته إلى ما هاجر إليه",
+          book: "صحيح البخاري",
+          chapter: "كتاب بدء الوحي",
+          number: 1,
+          grade: "صحيح",
+          explanation: "هذا الحديث أصل عظيم من أصول الإسلام، وهو يدل على أن الأعمال لا تكون صحيحة إلا بالنية، وأن النية هي التي تميز العبادات عن العادات"
+        },
+        {
+          id: 2,
+          narrator: "عائشة رضي الله عنها",
+          text: "قال رسول الله ﷺ: من أحدث في أمرنا هذا ما ليس منه فهو رد",
+          book: "صحيح مسلم",
+          chapter: "كتاب الأقضية",
+          number: 1718,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على أن كل بدعة في الدين مردودة، وأن المسلم يجب عليه أن يتبع السنة ولا يبتدع في الدين ما لم يأذن به الله"
+        },
+        {
+          id: 3,
+          narrator: "عبد الله بن عمر",
+          text: "قال رسول الله ﷺ: بني الإسلام على خمس: شهادة أن لا إله إلا الله وأن محمداً رسول الله، وإقام الصلاة، وإيتاء الزكاة، وحج البيت، وصوم رمضان",
+          book: "صحيح البخاري",
+          chapter: "كتاب الإيمان",
+          number: 8,
+          grade: "صحيح",
+          explanation: "هذا الحديث يوضح أركان الإسلام الخمسة التي هي أساس الدين، وهي الشهادتان والصلاة والزكاة والحج وصوم رمضان"
+        },
+        {
+          id: 4,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: المسلم من سلم المسلمون من لسانه ويده، والمهاجر من هجر ما نهى الله عنه",
+          book: "صحيح البخاري",
+          chapter: "كتاب الإيمان",
+          number: 10,
+          grade: "صحيح",
+          explanation: "هذا الحديث يوضح معنى الإسلام الحقيقي، وهو أن المسلم لا يؤذي غيره بلسانه أو يده، وأن المهاجر يترك ما حرم الله عليه"
+        },
+        {
+          id: 5,
+          narrator: "عبد الله بن مسعود",
+          text: "قال رسول الله ﷺ: لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه",
+          book: "صحيح البخاري",
+          chapter: "كتاب الإيمان",
+          number: 13,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على أن الإيمان لا يكتمل إلا بحب الخير للآخرين كما يحب الإنسان لنفسه، وهذا من أعلى درجات الإيمان"
+        },
+        {
+          id: 6,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: من حسن إسلام المرء تركه ما لا يعنيه",
+          book: "صحيح الترمذي",
+          chapter: "كتاب الزهد",
+          number: 2318,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على أن من علامات حسن إسلام المرء أن يترك ما لا يعنيه من الكلام والأفعال، وهذا من أخلاق الإسلام"
+        },
+        {
+          id: 7,
+          narrator: "عبد الله بن عباس",
+          text: "قال رسول الله ﷺ: من رأى منكم منكراً فليغيره بيده، فإن لم يستطع فبلسانه، فإن لم يستطع فبقلبه، وذلك أضعف الإيمان",
+          book: "صحيح مسلم",
+          chapter: "كتاب الإيمان",
+          number: 49,
+          grade: "صحيح",
+          explanation: "هذا الحديث يوضح مراتب تغيير المنكر، وأن المسلم يجب عليه أن يغير المنكر حسب قدرته، وأن التغيير بالقلب هو أضعف الإيمان"
+        },
+        {
+          id: 8,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: لا تدخلون الجنة حتى تؤمنوا، ولا تؤمنوا حتى تحابوا، أولا أدلكم على شيء إذا فعلتموه تحاببتم؟ أفشوا السلام بينكم",
+          book: "صحيح مسلم",
+          chapter: "كتاب الإيمان",
+          number: 54,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على أهمية المحبة بين المسلمين، وأن إفشاء السلام من أسباب المحبة، وأن المحبة شرط للإيمان"
+        },
+        {
+          id: 9,
+          narrator: "عبد الله بن عمر",
+          text: "قال رسول الله ﷺ: إن الله لا ينظر إلى صوركم وأموالكم، ولكن ينظر إلى قلوبكم وأعمالكم",
+          book: "صحيح مسلم",
+          chapter: "كتاب البر والصلة والآداب",
+          number: 2564,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على أن الله تعالى لا ينظر إلى المظاهر الخارجية، بل ينظر إلى ما في القلوب من الإخلاص وإلى الأعمال الصالحة"
+        },
+        {
+          id: 10,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: من سلك طريقاً يلتمس فيه علماً سهل الله له به طريقاً إلى الجنة",
+          book: "صحيح مسلم",
+          chapter: "كتاب الذكر والدعاء والتوبة والاستغفار",
+          number: 2699,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل طلب العلم، وأن من سلك طريقاً لطلب العلم سهل الله له طريقاً إلى الجنة"
+        },
+        {
+          id: 11,
+          narrator: "عبد الله بن مسعود",
+          text: "قال رسول الله ﷺ: الصلاة نور، والصدقة برهان، والصبر ضياء، والقرآن حجة لك أو عليك",
+          book: "صحيح مسلم",
+          chapter: "كتاب الطهارة",
+          number: 223,
+          grade: "صحيح",
+          explanation: "هذا الحديث يوضح فضائل الأعمال الصالحة، وأن الصلاة نور للإنسان، والصدقة برهان على إيمانه، والصبر ضياء في الدنيا والآخرة"
+        },
+        {
+          id: 12,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: من صلى علي صلاة واحدة صلى الله عليه عشراً",
+          book: "صحيح مسلم",
+          chapter: "كتاب الصلاة",
+          number: 408,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل الصلاة على النبي ﷺ، وأن من صلى عليه صلاة واحدة صلى الله عليه عشر صلوات"
+        },
+        {
+          id: 13,
+          narrator: "عبد الله بن عباس",
+          text: "قال رسول الله ﷺ: من صام رمضان إيماناً واحتساباً غفر له ما تقدم من ذنبه",
+          book: "صحيح البخاري",
+          chapter: "كتاب الإيمان",
+          number: 38,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل صيام رمضان، وأن من صامه إيماناً بالله واحتساباً للأجر غفر الله له ما تقدم من ذنبه"
+        },
+        {
+          id: 14,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: من قام رمضان إيماناً واحتساباً غفر له ما تقدم من ذنبه",
+          book: "صحيح البخاري",
+          chapter: "كتاب الإيمان",
+          number: 37,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل قيام رمضان، وأن من قامه إيماناً بالله واحتساباً للأجر غفر الله له ما تقدم من ذنبه"
+        },
+        {
+          id: 15,
+          narrator: "عبد الله بن عمر",
+          text: "قال رسول الله ﷺ: من حج فلم يرفث ولم يفسق رجع كيوم ولدته أمه",
+          book: "صحيح البخاري",
+          chapter: "كتاب الحج",
+          number: 1521,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل الحج، وأن من حج ولم يرفث ولم يفسق رجع من ذنوبه كيوم ولدته أمه"
+        },
+        {
+          id: 16,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: من أتى عرافاً فسأله عن شيء لم تقبل له صلاة أربعين يوماً",
+          book: "صحيح مسلم",
+          chapter: "كتاب السلام",
+          number: 2230,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على تحريم إتيان العرافين والكهنة، وأن من أتى عرافاً لم تقبل له صلاة أربعين يوماً"
+        },
+        {
+          id: 17,
+          narrator: "عبد الله بن مسعود",
+          text: "قال رسول الله ﷺ: لا تزول قدما عبد يوم القيامة حتى يسأل عن أربع: عن عمره فيم أفناه، وعن شبابه فيم أبلاه، وعن ماله من أين اكتسبه وفيم أنفقه، وعن علمه ماذا عمل به",
+          book: "صحيح الترمذي",
+          chapter: "كتاب صفة القيامة والرقائق والورع",
+          number: 2416,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على أن الإنسان سيسأل يوم القيامة عن أربع أمور: عمره وشبابه وماله وعلمه، وكيف استخدمها"
+        },
+        {
+          id: 18,
+          narrator: "عبد الله بن عباس",
+          text: "قال رسول الله ﷺ: من سئل عن علم فكتمه ألجم يوم القيامة بلجام من نار",
+          book: "صحيح أبو داود",
+          chapter: "كتاب العلم",
+          number: 3658,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على وجوب نشر العلم وعدم كتمانه، وأن من كتم علماً ألجم يوم القيامة بلجام من نار"
+        },
+        {
+          id: 19,
+          narrator: "أبو هريرة",
+          text: "قال رسول الله ﷺ: من دعا إلى هدى كان له من الأجر مثل أجور من تبعه لا ينقص ذلك من أجورهم شيئاً",
+          book: "صحيح مسلم",
+          chapter: "كتاب العلم",
+          number: 2674,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل الدعوة إلى الخير، وأن من دعا إلى هدى كان له من الأجر مثل أجور من تبعه"
+        },
+        {
+          id: 20,
+          narrator: "عبد الله بن مسعود",
+          text: "قال رسول الله ﷺ: من قرأ حرفاً من كتاب الله فله به حسنة، والحسنة بعشر أمثالها، لا أقول ألم حرف، ولكن ألف حرف ولام حرف وميم حرف",
+          book: "صحيح الترمذي",
+          chapter: "كتاب فضائل القرآن",
+          number: 2910,
+          grade: "صحيح",
+          explanation: "هذا الحديث يدل على فضل قراءة القرآن، وأن من قرأ حرفاً من القرآن فله به حسنة، والحسنة بعشر أمثالها"
+        }
+      ];
+
+      // Search in hadith database
+      const searchResults = hadithDatabase.filter(hadith => 
+        hadith.text.includes(query) || 
+        hadith.narrator.includes(query) || 
+        hadith.book.includes(query) ||
+        hadith.explanation.includes(query) ||
+        hadith.chapter.includes(query)
+      );
+
+      if (searchResults.length === 0) {
+        $('#results-container').html(`
+          <div class="text-center text-red-600 font-bold py-8">
+            <div class="text-3xl mb-4">خطأ</div>
+            <p class="text-lg"> لم يتم العثور على أحاديث. من فضلك جرّب نصًا آخر.</p>
+          </div>
+        `);
+        return;
+      }
+
+      // Display hadith results
+      const hadithResultsHtml = searchResults.map(hadith => `
+        <div class="hadith-card bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-2xl shadow-lg border border-yellow-100 animate-fadeIn mb-6">
+          
+          <!-- Hadith Text -->
+          <div class="text-xl md:text-2xl text-yellow-900 font-bold text-center mb-6 leading-relaxed">${hadith.text}</div>
+          
+          <!-- Hadith Info Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div class="bg-yellow-200 text-yellow-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">الراوي</div>
+              <div class="text-lg">${hadith.narrator}</div>
+            </div>
+            <div class="bg-blue-200 text-blue-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">الكتاب</div>
+              <div class="text-lg">${hadith.book}</div>
+            </div>
+            <div class="bg-green-200 text-green-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">الباب</div>
+              <div class="text-lg">${hadith.chapter}</div>
+            </div>
+            <div class="bg-purple-200 text-purple-800 rounded-lg p-3 text-center">
+              <div class="font-bold text-sm">الدرجة</div>
+              <div class="text-lg">${hadith.grade}</div>
+            </div>
+          </div>
+
+          <!-- Hadith Explanation -->
+          <div class="bg-white p-5 rounded-xl shadow-sm mb-4">
+            <h3 class="text-yellow-800 font-bold text-lg mb-3 flex items-center">
+              <span class="mr-2"></span>
+              شرح الحديث
+            </h3>
+            <p class="text-gray-700 leading-relaxed text-justify">${hadith.explanation}</p>
+          </div>
+
+          <!-- Additional Information -->
+          <div class="bg-blue-50 p-5 rounded-xl shadow-sm mb-4">
+            <h3 class="text-blue-800 font-bold text-lg mb-3 flex items-center">
+              <span class="mr-2"></span>
+              معلومات إضافية
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-semibold text-blue-700 mb-2">رقم الحديث:</h4>
+                <p class="text-gray-700 text-sm">${hadith.number}</p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-blue-700 mb-2">المصدر:</h4>
+                <p class="text-gray-700 text-sm">${hadith.book} - ${hadith.chapter}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="flex justify-center mt-6 space-x-4 space-x-reverse">
+            <button onclick="location.reload()" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition">
+               بحث جديد
+            </button>
+            <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+               طباعة
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      $('#results-container').html(hadithResultsHtml);
+      console.log('Hadith results rendered successfully');
+    }
+  </script>
+</body>
+</html>
